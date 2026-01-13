@@ -1,0 +1,56 @@
+
+
+//SQL
+create table host (
+id char(8) PRIMARY KEY,
+ide char(40) unique,
+manpwd character(20) NOT NULL,
+vpnpwd character(20),					--同為request驗證密碼
+clientip character(15),
+cday timestamp NOT NULL default now(),
+atime integer,
+dname character(20),
+lineid character varying(50),
+linekey character varying(50),
+remark text
+);
+
+create table device (
+id integer PRIMARY KEY,
+host char(8) REFERENCES host(id),
+devname character(20),
+type integer,	--尚無作用
+state integer,
+access integer,		--0是不開放,1是開放校外付費使用,2是僅開放校內付費使用,3是開放教職員使用
+price integer,
+w integer,		--短暫記錄瓦數
+ip character(15)
+);
+
+create table cron (
+id integer PRIMARY KEY,
+time char(20),
+dev integer REFERENCES device(id),
+control integer,
+daily integer
+);
+
+create table log (
+id integer PRIMARY KEY,
+devname character(20),
+control integer,
+by character(20),
+how character(10),
+pay integer,
+w integer,			--每次關閉時update並清空device的w
+time timestamp NOT NULL default now()
+);
+
+create table userdb (
+id integer PRIMARY KEY,
+number character(20),	--學號,教師號
+name character(20),
+level integer,		--1是學生 2是教師 3是管理員
+image text,
+correct integer		--1是核實 0是不通過
+);

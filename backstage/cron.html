@@ -1,0 +1,275 @@
+<!doctype html>
+<html lang="zh-hant">
+<head>
+<meta charset="utf-8">
+<script>
+var xhr,xhr1,xhr2,xhr3;
+var devstable=[];
+function init()
+{
+	devread();
+	cronread();
+}
+function setcron()
+{
+    url= "setcron.php";
+    var fd = new FormData();
+    var min=document.getElementById("min");
+    var h=document.getElementById("h");
+    var d=document.getElementById("d");
+    var m=document.getElementById("m");
+    var w=document.getElementById("w");
+    var act=document.getElementById("act");
+    fd.append("devid", dev.options[dev.selectedIndex].value);
+    fd.append("min", min.options[min.selectedIndex].value);
+    fd.append("h", h.options[h.selectedIndex].value);
+    fd.append("d", d.options[d.selectedIndex].value);
+    fd.append("m", m.options[m.selectedIndex].value);
+    fd.append("w", w.options[w.selectedIndex].value);
+    fd.append("act", act.options[act.selectedIndex].value);
+    try {
+    	xhr2=new XMLHttpRequest(); //建立一個AJAX物件
+        if (xhr2.overrideMimeType) xhr2.overrideMimeType('text/xml');
+    }
+    catch (e) { 
+		alert("Your Browser doesn't support XMLHttpRequest"); 
+		return false; 
+	}
+    xhr2.onreadystatechange = function() {
+        	if (xhr2.readyState==4 && xhr2.status==200) //如果呼叫成功，處理底下
+        	{ 
+			if (parseInt(xhr2.responseText)!=1)
+				alert("Set schedule Fail!="+xhr2.responseText);
+			else cronread();
+		}
+    	}
+    xhr2.open("post",url,true);
+    xhr2.send(fd);
+}
+function devread()
+{
+    url= "dev.php";
+    try {
+    	xhr1=new XMLHttpRequest(); //建立一個AJAX物件
+        if (xhr1.overrideMimeType) xhr1.overrideMimeType('text/xml');
+    }
+    catch (e) { 
+		alert("Your Browser doesn't support XMLHttpRequest"); 
+		return false; 
+	}
+    xhr1.onreadystatechange = function() {
+        	if (xhr1.readyState==4 && xhr1.status==200) 
+        	{ 
+			var data=JSON.parse(xhr1.responseText);
+			var devObj = document.getElementById("dev");
+			if (data.length<=0)
+			{
+            			dev.options[0]=new Option("尚無資料",0);
+			}
+			else
+			{
+				for (var i=0;i<data.length;i++)
+				{
+            				dev.options[i]=new Option(data[i].devname,data[i].ip);
+					devstable[data[i].ip]=data[i].devname;
+				}
+			}
+		}
+    	}
+    xhr1.open("get",url,true);
+    xhr1.setRequestHeader('Content-Type','application/x-www-urlencoded; charset=utf-8');
+    xhr1.send(null);
+}
+function delcron(x)
+{
+    url= "setcron.php";
+    var fd = new FormData();
+    fd.append("op", -3);
+    fd.append("line",x );
+    try {
+        xhr3=new XMLHttpRequest(); //建立一個AJAX物件
+        if (xhr3.overrideMimeType) xhr3.overrideMimeType('text/xml');
+    }
+    catch (e) {
+                alert("Your Browser doesn't support XMLHttpRequest");
+                return false;
+        }
+    xhr3.onreadystatechange = function() {
+                if (xhr3.readyState==4 && xhr3.status==200) //如果呼叫成功，處理底下
+                {
+                        if (parseInt(xhr3.responseText)!=1)
+                                alert("Del schedule Fail!"+xhr3.responseText);
+                        else cronread();
+                }
+        }
+    xhr3.open("post",url,true);
+    xhr3.send(fd);
+}
+function cronread()
+{
+    url= "cron.php";
+    try {
+    	xhr=new XMLHttpRequest(); //建立一個AJAX物件
+        if (xhr.overrideMimeType) xhr.overrideMimeType('text/xml');
+    }
+    catch (e) { 
+		alert("Your Browser doesn't support XMLHttpRequest"); 
+		return false; 
+	}
+    xhr.onreadystatechange = function() {
+        	if (xhr.readyState==4 && xhr.status==200) //如果呼叫成功，處理底下
+        	{ 
+			var data=JSON.parse(xhr.responseText);
+			var schedule=document.getElementById("schedule");
+			if (data.length<=0)
+			{
+				document.getElementById("schedule").innerHTML="尚無資料";
+			}
+			else
+			{
+				var s='<table border="1"><tr align="center"><td>裝置</td><td>&nbsp;月&nbsp;</td><td>&nbsp;週&nbsp;</td><td>&nbsp;日&nbsp;</td><td>&nbsp;時&nbsp;</td><td>&nbsp;分&nbsp;</td><td>動作</td><td>處理</td></tr>';
+				for (i=0;i<data.length;i=i+1){
+					if (data[i].trim().length==0) continue;
+					var item=data[i].split(" ");
+					var ss=item[6].split(":");
+					var onoff;
+					if (parseInt(ss[1])==-100) onoff="on";
+					else onoff="off";
+					s=s+'<tr align="center"><td>'+devstable[ss[0]]+'</td><td>'+item[3]+"</td><td>"+item[4]+"</td><td>"+item[2]+"</td><td>"+item[1]+
+					"</td><td>"+item[0]+"</td><td>"+onoff+"</td><td>"+'<button onclick="delcron('+i+')">刪除</button></tr>';
+				}
+				s=s+"</table>";
+				schedule.innerHTML=s;
+			}
+		}
+    	}
+    xhr.open("get",url,true);
+    xhr.setRequestHeader('Content-Type','application/x-www-urlencoded; charset=utf-8');
+    xhr.send(null);
+}
+</script>
+<title>排程設定</title>
+</head>
+<body onload="init()">
+<h2>排程設定 <a href="index.html">設定完成</a></h2>
+裝置：<select id="dev"><option value="1">A 01</option> <option value="2">A 02</option>
+	<option value="3">A 03</option>
+	<option value="4">A 04</option>
+	<option value="5">A 05</option>
+	<option value="6">B 01</option> <option value="7">B 02</option>
+	<option value="8">B 03</option>
+        <option value="9">B 04</option>
+        <option value="10">B 05</option>
+	<option value="11">C 01</option> <option value="12">C 02</option>
+        <option value="13">C 03</option>
+        <option value="14">C 04</option>
+        <option value="15">C 05</option>
+</select>
+&nbsp;&nbsp;&nbsp;
+月：<select id="m">
+<option value="*">任意</option>
+<option value="00">00</option>
+<option value="01">01</option>
+<option value="02">02</option>
+<option value="03">03</option>
+<option value="04">04</option>
+<option value="05">05</option>
+<option value="06">06</option>
+<option value="07">07</option>
+<option value="08">08</option>
+<option value="09">09</option>
+<option value="10">10</option>
+<option value="11">11</option>
+<option value="12">12</option>
+</select>
+&nbsp;&nbsp;&nbsp;
+週：<select id="w">
+<option value="*">任意</option>
+<option value="01">一</option>
+<option value="02">二</option>
+<option value="03">三</option>
+<option value="04">四</option>
+<option value="05">五</option>
+<option value="06">六</option>
+<option value="00">日</option>
+</select>
+&nbsp;&nbsp;&nbsp;
+日：<select id="d">
+<option value="*">任意</option>
+<option value="00">00</option> 
+<option value="01">01</option>
+<option value="02">02</option>
+<option value="03">03</option>
+<option value="04">04</option>
+<option value="05">05</option>
+<option value="06">06</option>
+<option value="07">07</option>
+<option value="08">08</option>
+<option value="09">09</option>
+<option value="10">10</option> 
+<option value="11">11</option>
+<option value="12">12</option>
+<option value="13">13</option>
+<option value="14">14</option>
+<option value="15">15</option>
+<option value="16">16</option>
+<option value="17">17</option>
+<option value="18">18</option>
+<option value="19">19</option>
+<option value="20">20</option>
+<option value="21">21</option>
+<option value="22">22</option>
+<option value="23">23</option>
+<option value="24">24</option>
+<option value="25">25</option>
+<option value="26">26</option>
+<option value="27">27</option>
+<option value="28">28</option>
+<option value="29">29</option>
+<option value="30">30</option>
+<option value="31">31</option>
+</select>
+&nbsp;&nbsp;&nbsp;
+時：<select id="h">
+<option value="*">任意</option>
+<option value="00">00</option> 
+<option value="01">01</option>
+<option value="02">02</option>
+<option value="03">03</option>
+<option value="04">04</option>
+<option value="05">05</option>
+<option value="06">06</option>
+<option value="07">07</option>
+<option value="08">08</option>
+<option value="09">09</option>
+<option value="10">10</option> 
+<option value="11">11</option>
+<option value="12">12</option>
+<option value="13">13</option>
+<option value="14">14</option>
+<option value="15">15</option>
+<option value="16">16</option>
+<option value="17">17</option>
+<option value="18">18</option>
+<option value="19">19</option>
+<option value="20">20</option>
+<option value="21">21</option>
+<option value="22">22</option>
+<option value="23">23</option>
+</select>
+&nbsp;&nbsp;&nbsp;
+分：<select id="min">
+<option value="*">任意</option>
+<option value="00">00</option> <option value="10">10</option><option value="20">20</option><option value="30">30</option><option value="40">40</option><option value="50">50</option></select>
+&nbsp;&nbsp;&nbsp;
+動作：<select id="act">
+<option value="0">關閉</option>
+<option value="1">啟動</option>
+</select>
+<button onclick="setcron()">設定</button>
+<p/>
+<div id="schedule">
+</div>
+</body>
+</html>
+

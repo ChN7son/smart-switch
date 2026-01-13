@@ -1,0 +1,15 @@
+<?php
+//SQL
+$DBNAME='switch';
+$WRITER='switch';
+$WRITER_PW='Sw3o#svHx1Z2';
+$VPNFN='/etc/ppp/chap-secrets';
+$VPNPSK='JcVZZ3pyKLLyT7er';///etc/ipsec.secrets
+$URL='http://192.168.42.1/qasw.php';
+$URLS='http://192.168.42.1/qasw.php';
+$JURL='http://sw.saga.net.tw/qa.php';
+$JURLS='https://sw.saga.net.tw/qa.php';
+$GPIO=4;
+$ON_DELAY=300;
+$OFF_DELAY=600;
+?>
