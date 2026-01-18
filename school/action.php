@@ -45,7 +45,13 @@ switch ($action) {
         	}
         	echo $i;
         } else if ($dop==1){
-        	//insert into...
+        	$devname = str_replace("'","''",$_REQUEST['devname']);
+			$result = deviceInsert($db_conn,$devname);
+			if ($result)
+        		$outmsg=array('status'=> 1,'msg'=>"success");
+        	else
+        		$outmsg=array('status'=> -1,'msg'=>"error");
+        	die(json_encode($outmsg));
         } else if ($dop==2){
         	$id=(int)$_REQUEST['id'];
         	$devname=str_replace("'","''",$_REQUEST['devname']);
@@ -55,8 +61,43 @@ switch ($action) {
         	else
         		$outmsg=array('status'=> -1,'msg'=>"error");
         	die(json_encode($outmsg));
-        }
+        } else if ($dop==3){
+			$id = (int)$_REQUEST['id'];
+			$result = deviceDelete($db_conn,$id);
+        	if ($result)
+        		$outmsg=array('status'=> 1,'msg'=>"success");
+        	else
+        		$outmsg=array('status'=> -1,'msg'=>"error");
+        	die(json_encode($outmsg));
+		}
         break;
+	case 'switch':
+		$result = AuthCheck();
+		if (!$result){
+			$outmsg=array('status'=> -1,'msg'=>"permission denied");
+			die(json_encode($outmsg));
+		}
+		
+		$swop=@(int)$_REQUEST['swop'];
+		$id=@(int)$_REQUEST['id'];
+		$status=@(int)$_REQUEST['status'];
+		
+		if ($swop==1){
+			$result=powerSwitch($id,$status,$db_conn);
+			if (!$result)
+				$outmsg=array('status'=> -1,'msg'=>"error");
+			else
+				$outmsg=array('status'=> 1,'msg'=>"success");
+			die(json_encode($outmsg));
+		} else if ($swop==2){
+			$result=topSetting($id,$db_conn);
+			if ($result==0 || $result==1)
+				$outmsg=array('status'=> 1,'msg'=>"success",'top'=>$result[0]);
+			else
+				$outmsg=array('status'=> -1,'msg'=>"設定超過上限四個或設備消失");
+			die(json_encode($outmsg));
+		}
+		break;
     case 'atime':
         session_start();
 

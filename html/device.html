@@ -10,9 +10,36 @@
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
 	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 	<script src="https://kit.fontawesome.com/8682db5ee1.js" crossorigin="anonymous"></script><!--可能有期限-->
-	<script src="../html/device.js"></script>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+	<script src="../js/device.js"></script>
 	<script>
 	t=setInterval("atime()",30000);
+	function addDevice(){
+		const new_devname = document.getElementById("new_devname").value.trim();
+		if (!new_devname) {
+			document.getElementById("insert_alert").classList.remove('invalid-feedback');
+			return;
+		}
+
+		document.getElementById("insert_alert").classList.add('invalid-feedback');
+		var fd = new FormData();
+		fd.append("dop", 1);
+		fd.append("devname", new_devname);
+		
+		var xhr = new XMLHttpRequest();
+		xhr.addEventListener("load", function(){
+			let item = JSON.parse(xhr.responseText);
+			if (item.status==1){
+				init();
+				document.getElementById("new_devname").value = '';
+			} else {
+				alert(item.msg);
+			}
+		}, true);
+		//xhr.addEventListener("error", uploadFailed, false);
+		xhr.open("POST", "action.php?action=device");
+		xhr.send(fd);
+	}
 	function changeDevname(n) {
 		const devname = document.getElementById("devname"+n).value.trim();
 		var fd = new FormData();
@@ -25,6 +52,7 @@
 			let item = JSON.parse(xhr.responseText);
 			if (item.status==1){
 				document.getElementById("devname"+n).style.border="1px solid green";
+				init();
 			} else {
 				document.getElementById("devname"+n).style.border="1px solid red";
 				alert(item.msg);
@@ -33,6 +61,26 @@
 		//xhr.addEventListener("error", uploadFailed, false);
 		xhr.open("POST", "action.php?action=device");
 		xhr.send(fd);
+	}
+	function delDevname(n){
+		if (confirm("此操作不可逆，請確認刪除這個裝置？")) {
+			var fd = new FormData();
+			fd.append("dop", 3);
+			fd.append("id", n);
+	
+			var xhr = new XMLHttpRequest();
+			xhr.addEventListener("load", function(){
+				let item = JSON.parse(xhr.responseText);
+				if (item.status==1){
+					window.location.reload();
+				} else {
+					alert(item.msg);
+				}
+			}, true);
+			//xhr.addEventListener("error", uploadFailed, false);
+			xhr.open("POST", "action.php?action=device");
+			xhr.send(fd);
+		}
 	}
 	function topSetting(n) {
 		var fd = new FormData();
@@ -54,7 +102,7 @@
 			}
 		}, true);
 		//xhr.addEventListener("error", uploadFailed, false);
-		xhr.open("POST", "switch.php");
+		xhr.open("POST", "action.php?action=switch");
 		xhr.send(fd);
 	}
 	function init(){
@@ -67,6 +115,7 @@
 				let data=response.split("\n");
 				const datalength=parseInt(data.length-1);
 				const cnt=parseInt(data[datalength]);
+				document.getElementById('online_device').innerHTML = cnt;
 				let devname='<div class="row">';
 				let devname2='';
 				for (var i=0;i<cnt;i++){
@@ -77,7 +126,7 @@
 						status = ' checked';
 					if (item.top==1)
 						top = 'fas fa-heart';
-					devname2=devname2+'<tr><td><input type="text" class="form-control" id="devname'+item.id+'" value="'+item.devname.trim()+'" onchange="changeDevname('+item.id+')" /></td><td>'+item.ip+'</td><td>'+item.price+'</td><td>'+item.access+'</td><td><button type="button" class="btn btn-outline-danger btn-sm">刪除</button></td></tr>';
+					devname2=devname2+'<tr><td><input type="text" class="form-control" id="devname'+item.id+'" value="'+item.devname.trim()+'" onchange="changeDevname('+item.id+')" /></td><td>'+item.ip+'</td><td>'+item.price+'</td><td>'+item.access+'</td><td><button type="button" class="btn btn-outline-danger btn-sm" onclick="delDevname('+item.id+')">刪除</button></td></tr>';
 					devname=devname+'<div class="col-6 col-lg-3 pt-5"><h5>'+item.devname.trim()+' <span class="'+top+' text-danger" id="topicon'+item.id+'" role="button" onclick="topSetting('+item.id+')"></span></h5>'+
 					`
 					<div class="center">
@@ -168,6 +217,10 @@
 	.switch_demo-checkbox:checked + .switch_demo-label .switch_demo-switch {
 	right: 0px;
 	}
+	.add-device-btn:hover {
+		background-color: rgba(13,110,253,.08);
+		border-radius: 4px;
+	}
 	</style>
 </head>
 <body onload="init()">
@@ -181,7 +234,7 @@
 		</div>
 		<div class="col-3">
 			<div class="card bg-light" style="height:150px;">
-				<div class="card-body">在線設備<h2>15<span style="font-size:14pt;">/15<span></h2></div>
+				<div class="card-body">在線設備<h2><span id="online_device">0</span><span style="font-size:14pt;">/%total_device%<span></h2></div>
 			</div>
 		</div>
 	</div>
@@ -213,6 +266,19 @@
 				</thead>
 				<tbody id="editlist">
 					
+				</tbody>
+				<tbody>
+					<tr>
+						<td>
+							<input type="text" class="form-control" id="new_devname" placeholder="裝置名稱">
+							<div id="insert_alert" class="invalid-feedback text-danger">請輸入裝置名稱</div>
+						</td>
+						<td colspan="4">
+							<button type="button" class="btn btn-link p-1 text-primary text-decoration-none add-device-btn" onclick="addDevice()">
+								<i class="bi bi-plus-circle"></i> 新增裝置
+							</button>
+						</td>
+					</tr>
 				</tbody>
 			</table>
 		</div>
