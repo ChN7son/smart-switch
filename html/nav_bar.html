@@ -1,0 +1,42 @@
+<nav class="navbar navbar-expand-md bg-dark navbar-dark">
+	<a class="navbar-brand" href="./"><span id="dname"></span>管理後台</a>
+	<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
+		<span class="navbar-toggler-icon"></span>
+	</button>
+	<div class="collapse navbar-collapse" id="collapsibleNavbar">
+		<ul class="navbar-nav">
+			
+			<li class="nav-item">
+				<a class="nav-link" href="action.php?action=device">裝置管理</a>
+			</li>
+			<!-- Dropdown -->
+			<li class="nav-item dropdown">
+				<a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">排程管理</a>
+				<div class="dropdown-menu">
+					<a class="dropdown-item" href="cron.php">固定排程設定</a>
+					<a class="dropdown-item" href="cron.php">加入臨時排程</a>
+				</div>
+			</li>
+			<!-- Dropdown -->
+			<li class="nav-item dropdown">
+				<a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">會員管理</a>
+				<div class="dropdown-menu">
+					<a class="dropdown-item" href="#">帳號核實</a>
+					<a class="dropdown-item" href="#">權限設定</a>
+				</div>
+			</li>
+			<li class="nav-item">
+				<a class="nav-link" href="report.php">報表查詢</a>
+			</li>
+			<li class="nav-item">
+				<a class="nav-link" href="#">其他設定</a>
+			</li>
+			
+		</ul>
+		<!--
+		<ul class="navbar-nav justify-content-end">
+			<a class="nav-link" href="">登出</a>
+		</ul>
+		-->
+	</div>  
+</nav>

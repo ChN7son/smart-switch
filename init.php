@@ -8,7 +8,7 @@ require('dbconfig.php');
 $RG='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890!@$^&*()~][{},.;<>_-+=/';
 $URG='abcdefghjkmnpqrstuvwxyz123456789';//管理密碼
 $DRG='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890';
-$db_conn=db_connect("host=localhost dbname=$DBNAME user=$WRITER password=$WRITER_PW");
+$db_conn=db_connect("host=$HOST dbname=$DBNAME user=$WRITER password=$WRITER_PW");
 db_set_encoding($db_conn,'utf-8');
 if (!$db_conn)
      die("DataBase $DBNAME open fail!");

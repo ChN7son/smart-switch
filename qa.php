@@ -4,7 +4,7 @@ require_once('dbconfig.php');
 date_default_timezone_set('Asia/Taipei');
 $device=str_replace("'","''",$_REQUEST['id']);
 $pwd=str_replace("'","''",$_REQUEST['pwd']);
-$db_conn=db_connect("host=localhost dbname=$DBNAME user=$WRITER password=$WRITER_PW");
+$db_conn=db_connect("host=$HOST dbname=$DBNAME user=$WRITER password=$WRITER_PW");
 db_set_encoding($db_conn,'utf-8');
 if (!$db_conn)
     die("DataBase $DBNAME open fail!");

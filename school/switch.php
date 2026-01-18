@@ -1,12 +1,12 @@
 <?php
 require_once('../member/auth.php');
 
-$result = bAuthCheck();
+$result = AuthCheck();
 if (!$result){
 	$outmsg=array('status'=> -1,'msg'=>"permission denied");
 	die(json_encode($outmsg));
 }
-$db_conn=db_connect("host=localhost dbname=$DBNAME user=$WRITER password=$WRITER_PW");
+$db_conn=db_connect("host=$HOST dbname=$DBNAME user=$WRITER password=$WRITER_PW");
 if (!$db_conn){
 	$outmsg=array('status'=> -1,'msg'=>"DataBase open fail!");
 	die(json_encode($outmsg));
