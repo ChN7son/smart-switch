@@ -1,6 +1,8 @@
 <?php
 require_once('../member/auth.php');
-
+require_once('../lib/db_func.php');
+//ini_set('display_errors', 1);
+//ini_set('display_startup_errors', 1);
 $db_conn=db_connect("host=$HOST dbname=$DBNAME user=$WRITER password=$WRITER_PW");
 if (!$db_conn){
 	$outmsg=array('status'=> -1,'msg'=>"DataBase open fail!");
@@ -53,32 +55,6 @@ switch ($action) {
         	else
         		$outmsg=array('status'=> -1,'msg'=>"error");
         	die(json_encode($outmsg));
-        }
-
-        function deviceSelect($db_conn,$top) {
-        	session_start();
-        	if ($top==1){
-        		$topSelect='and top=1';
-        	}
-        	$QUERY="select id,devname,state,access,price,ip,top from device where host='${_SESSION['id']}' ${topSelect} order by id asc";
-        	$result=db_exec($db_conn,$QUERY);
-        	$numrow=db_NumRows($result);
-        	if (!$result){
-        		return false;
-        	}else {	
-        		return array($result, $numrow);
-        	}
-        }
-        function deviceUpdate($db_conn,$id,$devname) {
-        	session_start();
-        	$QUERY="update device set devname='${devname}' where id=${id}";
-        	$result=db_exec($db_conn,$QUERY);
-        	$numrow=db_NumRows($result);
-        	if (!$result){
-        		return false;
-        	}else {	
-        		return true;
-        	}
         }
         break;
     case 'atime':

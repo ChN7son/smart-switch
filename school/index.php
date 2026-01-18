@@ -12,10 +12,12 @@ if (!$result){
 
     switch ($action) {
         case 'device':
-            $html = $template->render('device.html');
+            include 'device.php';
             break;
         default:
-            $template->set('nav_bar', '$navBar');
+			$navBar = new Template();
+			$navBarHtml = $navBar->render('nav_bar.html');
+            $template->set('nav_bar', $navBarHtml);
             $html = $template->render('index.html');
             break;
     }
