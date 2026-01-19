@@ -35,6 +35,6 @@ function powerSwitch(n) {
 	var xhr = new XMLHttpRequest();
 	//xhr.addEventListener("load", uploadComplete, false);
 	//xhr.addEventListener("error", uploadFailed, false);
-	xhr.open("POST", "switch.php");
+	xhr.open("POST", "action.php?action=switch");
 	xhr.send(fd);
 }

@@ -28,6 +28,9 @@ if (!$result){
         case 'device':
             include 'device.php';
             break;
+		case 'cron':
+            include 'cron.php';
+            break;
         default:
 			$template->set('id', $_SESSION['id']);			// 能進到這層基本上都是有login SESSION
 			$template->set('dname', $_SESSION['dname']);	// 所以不用防跳脫

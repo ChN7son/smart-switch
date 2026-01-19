@@ -1,8 +1,8 @@
 <?php
 require_once('../member/auth.php');
 require_once('../lib/db_func.php');
-//ini_set('display_errors', 1);
-//ini_set('display_startup_errors', 1);
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
 $db_conn=db_connect("host=$HOST dbname=$DBNAME user=$WRITER password=$WRITER_PW");
 if (!$db_conn){
 	$outmsg=array('status'=> -1,'msg'=>"DataBase open fail!");
@@ -98,6 +98,32 @@ switch ($action) {
 			die(json_encode($outmsg));
 		}
 		break;
+	case 'cron':
+		$result = AuthCheck();
+        if (!$result){
+        	$outmsg=array('status'=> -1,'msg'=>"permission denied");
+        	die(json_encode($outmsg));
+        }
+
+        $cop=@(int)$_REQUEST['cop'];
+        if ($cop==1){
+        	$device = @(int)$_REQUEST['device'];
+        	$status=@(int)$_REQUEST['status'];
+        	$weekdays = trim(str_replace("'","''",$_REQUEST['weekdays']));
+        	$execute_time = trim(str_replace("'","''",$_REQUEST['execute_time']));
+        	$execute_repeat = $_REQUEST['execute_repeat'] == 'true' ? 1 : 0;
+			
+			if ($weekdays == ''){
+				$weekdays = null;
+			}
+
+			$result = cronInsert($db_conn, $device, $status, $weekdays, $execute_time, $execute_repeat);
+			if ($result)
+        		$outmsg=array('status'=> 1,'msg'=>"success");
+        	else
+        		$outmsg=array('status'=> -1,'msg'=>"error");
+        	die(json_encode($outmsg));
+        }
     case 'atime':
         session_start();
 
