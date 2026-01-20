@@ -1,3 +1,17 @@
+<script>
+function logout(){
+	const url = 'action.php?action=login';
+	var data=new FormData();
+	data.append("logout", 1);
+	var xhr = new XMLHttpRequest();
+	xhr.addEventListener("load", reloadComplete, false);
+	xhr.open("POST", url);
+	xhr.send(data);
+}
+function reloadComplete(evt) {
+	location.reload();
+}
+</script>
 <nav class="navbar navbar-expand-md bg-dark navbar-dark">
 	<a class="navbar-brand" href="."><span id="dname"></span>首頁</a>
 	<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
@@ -33,10 +47,8 @@
 			</li>
 			
 		</ul>
-		<!--
 		<ul class="navbar-nav justify-content-end">
-			<a class="nav-link" href="">登出</a>
+			<a class="nav-link" onclick="logout()">登出</a>
 		</ul>
-		-->
 	</div>  
 </nav>

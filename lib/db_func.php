@@ -87,7 +87,7 @@ function topSetting($id,$db_conn) {
 }
 
 function cronSelect($db_conn, $host){
-	$query = "SELECT d.devname, c.time, c.dev, c.control, c.daily, c.repeat
+	$query = "SELECT c.id, d.devname, c.time, c.dev, c.control, c.daily, c.repeat
 			  FROM cron AS c
 			  JOIN device AS d ON d.id = c.dev
 			  JOIN host AS h ON h.id = d.host AND h.id = '${host}'
@@ -105,6 +105,17 @@ function cronInsert($db_conn, $device, $control, $weekdays, $execute_time, $exec
 	$query = "INSERT INTO cron (id, time, dev, control, daily, repeat) VALUES ((select max(id)+1 from cron), '${execute_time}', ${device}, ${control}, '${weekdays}', ${execute_repeat})";
 	$result = db_exec($db_conn,$query);
 	$numrow = db_NumRows($result);
+	if (!$result){
+		return false;
+	}else {	
+		return true;
+	}
+}
+
+function cronDelete($db_conn,$id) {
+	$QUERY="delete from cron where id=${id}";
+	$result=db_exec($db_conn,$QUERY);
+	$numrow=db_NumRows($result);
 	if (!$result){
 		return false;
 	}else {	

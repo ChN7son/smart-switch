@@ -20,6 +20,7 @@ if ($results){
 	for ($i=0;$i<$results[1];$i++){
     	$row = db_fetch_assoc($results[0],$i);
 		$cronList = new Template();
+		$cronList->set('cron_id', $row['id']);
 		$cronList->set('cron_dname', $row['devname']);
 		$cronList->set('cron_status', $row['control'] == 1 ? '開啟' : '關閉');
 		$cronList->set('cron_time', substr($row['time'], 0, 5));

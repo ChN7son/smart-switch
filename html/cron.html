@@ -44,6 +44,26 @@
 		xhr.open("POST", "action.php?action=cron");
 		xhr.send(fd);
 	}
+	function del(n){
+		if (confirm("此操作不可逆，請確認刪除這個排程？")) {
+			var fd = new FormData();
+			fd.append("cop", 3);
+			fd.append("id", n);
+	
+			var xhr = new XMLHttpRequest();
+			xhr.addEventListener("load", function(){
+				let item = JSON.parse(xhr.responseText);
+				if (item.status==1){
+					window.location.reload();
+				} else {
+					alert(item.msg);
+				}
+			}, true);
+			//xhr.addEventListener("error", uploadFailed, false);
+			xhr.open("POST", "action.php?action=cron");
+			xhr.send(fd);
+		}
+	}
 	</script>
 	<style>
 	.weekday-picker {
@@ -158,6 +178,7 @@
 				<th>時間</th>
 				<th>週期</th>
 				<th>重複</th>
+				<th></th>
 			</tr>
 		</thead>
 		<tbody>

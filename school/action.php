@@ -12,9 +12,20 @@ if (!$db_conn){
 $action = $_GET['action'];
 switch ($action) {
     case 'login':
+		if ((int)$_REQUEST['logout']==1){
+			session_start();
+			$_SESSION['uid']='';
+			$_SESSION['level']='';
+			$_SESSION['id']='';
+			$_SESSION['dname']='';
+			unset($_SESSION['uid']);
+			unset($_SESSION['level']);
+			unset($_SESSION['id']);
+			unset($_SESSION['dname']);
+			$outmsg=array('status'=> 1,'msg'=>"登出成功");
+			die(json_encode($outmsg));
+		}
         if (isset($_REQUEST['uid']) && isset($_REQUEST['pwd'])){       
-        	
-        
         	$login = new Auth();
         	$login->uid = str_replace("'","''",$_REQUEST['uid']);
         	$login->pwd = str_replace("'","''",$_REQUEST['pwd']);
@@ -123,7 +134,15 @@ switch ($action) {
         	else
         		$outmsg=array('status'=> -1,'msg'=>"error");
         	die(json_encode($outmsg));
-        }
+        } else if ($cop == 3){
+			$id = (int)$_REQUEST['id'];
+			$result = cronDelete($db_conn, $id);
+        	if ($result)
+        		$outmsg=array('status'=> 1,'msg'=>"success");
+        	else
+        		$outmsg=array('status'=> -1,'msg'=>"error");
+        	die(json_encode($outmsg));
+		}
     case 'atime':
         session_start();
 

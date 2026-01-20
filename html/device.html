@@ -126,8 +126,13 @@
 						status = ' checked';
 					if (item.top==1)
 						top = 'fas fa-heart';
-					devname2=devname2+'<tr><td><input type="text" class="form-control" id="devname'+item.id+'" value="'+item.devname.trim()+'" onchange="changeDevname('+item.id+')" /></td><td>'+item.ip+'</td><td>'+item.price+'</td><td>'+item.access+'</td><td><button type="button" class="btn btn-outline-danger btn-sm" onclick="delDevname('+item.id+')">刪除</button></td></tr>';
-					devname=devname+'<div class="col-6 col-lg-3 pt-5"><h5>'+item.devname.trim()+' <span class="'+top+' text-danger" id="topicon'+item.id+'" role="button" onclick="topSetting('+item.id+')"></span></h5>'+
+					if (i >= 15){
+						devname2=devname2+'<tr><td><input type="text" class="form-control" id="devname'+item.id+'" value="'+item.devname.trim()+'" onchange="changeDevname('+item.id+')" /></td><td>'+item.ip+'</td><td>'+item.price+'</td><td>'+item.access+'</td><td><button type="button" class="btn btn-outline-danger btn-sm" onclick="delDevname('+item.id+')">刪除</button></td></tr>';
+					} else {
+						devname2=devname2+'<tr><td><input type="text" class="form-control" id="devname'+item.id+'" value="'+item.devname.trim()+'" onchange="changeDevname('+item.id+')" /></td><td>'+item.ip+'</td><td>'+item.price+'</td><td>'+item.access+'</td></tr>';
+					}
+					
+					devname=devname+'<div class="' + (((i+1) % 5 == 0) ? 'col-lg-4' : 'col-lg-2') + ' pt-5"><h5>'+item.devname.trim()+' <span class="'+top+' text-danger" id="topicon'+item.id+'" role="button" onclick="topSetting('+item.id+')"></span></h5>'+
 					`
 					<div class="center">
 						<div class="switch_demo">
