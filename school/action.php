@@ -82,6 +82,26 @@ switch ($action) {
         	die(json_encode($outmsg));
 		}
         break;
+	case 'setting':
+		$result = AuthCheck();
+		if (!$result){
+			$outmsg=array('status'=> -1,'msg'=>"permission denied");
+			die(json_encode($outmsg));
+		}
+		session_start();
+		
+		$nname = str_replace("'","''",$_REQUEST['nname']);
+		$name = $_SESSION['id'];
+
+		$Q = "update host set dname='$nname' where id='$name'";
+		$result = db_exec($db_conn, $Q);
+		if (!$result){
+			$outmsg=array('status'=> -1,'msg'=>"error");
+		} else {
+			$_SESSION['dname'] = $nname;
+			$outmsg=array('status'=> 1,'msg'=>"修改成功");
+		}
+		die(json_encode($outmsg));
 	case 'switch':
 		$result = AuthCheck();
 		if (!$result){
